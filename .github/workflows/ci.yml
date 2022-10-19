@@ -26,13 +26,13 @@ jobs:
       - name: Setter
         id: setter
         run: |
-          echo "SIMPLE_VAR=${{ env.SIMPLE_VAR }}"
+          echo "simple_var=${{ env.simple_var }}"
           echo "should-work=v4.2" >> $GITHUB_OUTPUT
-          echo "my-secret-output=${{ env.SIMPLE_VAR }}" >> $GITHUB_OUTPUT
+          echo "my-secret-output=${{ env.simple_var }}" >> $GITHUB_OUTPUT
           echo "my-encoded-output=$(echo "v4.${{ secrets.TOO_SIMPLE_SECRET }}" | base64)" >> $GITHUB_OUTPUT
       - name: Getter in same job
         run: |
-          echo "still ok ? env.SIMPLE_VAR=${{ env.SIMPLE_VAR }}"
+          echo "still ok ? env.simple_var=${{ env.simple_var }}"
   
   getenv:
     needs: setenv
@@ -42,7 +42,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Getter in other job
         run: |
-          echo "env.SIMPLE_VAR=${{ env.SIMPLE_VAR }}"
+          echo "env.simple_var=${{ env.simple_var }}"
           echo "needs.setenv.outputs.should-work=${{ needs.setenv.outputs.should-work }}"
           echo "needs.setenv.outputs.my-secret-output=${{ needs.setenv.outputs.my-secret-output }}"
           echo "needs.setenv.outputs.my-encoded-output=${{ needs.setenv.outputs.my-encoded-output }}"
