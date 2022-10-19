@@ -1,0 +1,45 @@
+name: CI Test Global Env
+on:
+  workflow_dispatch:
+
+jobs:
+  setenv:
+    name: Set Env Variable Globaly
+    runs-on: ubuntu-latest
+    outputs:
+      other-var-from-env: ${{ env.other_var }}
+      my-secret-output-from-env: ${{ env.secret_var }} 
+      my-secret-output: ${{ steps.setter.outputs.my-secret-output }}
+      my-secret-output-first-set-in-env: ${{ steps.setter.outputs.my-secret-output-first-set-in-env }}
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setter
+        id: setter
+        run: |
+          echo "MY_VAR=toto" >> $GITHUB_ENV
+          echo "other_var=yolo" >> $GITHUB_ENV
+          echo "secret_var=${{ secrets.TOO_SIMPLE_SECRET }}" >> $GITHUB_ENV
+          echo "my-secret-output=${{ secrets.TOO_SIMPLE_SECRET }}" >> $GITHUB_OUTPUT
+          echo "my-secret-output-first-set-in-env=${{ env.secret_var }}" >> $GITHUB_OUTPUT
+      - name: Getter in same job
+        run: |
+          echo "env.MY_VAR=${{ env.MY_VAR }} and env.other_var=${{ env.other_var }}"
+          echo "env.secret_var=${{ env.secret_var }}"
+          echo "secrets.TOO_SIMPLE_SECRET=${{ secrets.TOO_SIMPLE_SECRET }}"
+          echo "steps.setter.outputs.my-secret-output=${{ steps.setter.outputs.my-secret-output }}"
+          echo "steps.setter.outputs.my-secret-output-first-set-in-env=${{ steps.setter.outputs.my-secret-output-first-set-in-env }}"
+  
+  getenv:
+    need: setenv
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Getter in other job
+        run: |
+          echo "env.MY_VAR=${{ env.MY_VAR }} and env.other_var=${{ env.other_var }}"
+          echo "env.secret_var=${{ env.secret_var }}"
+          echo "secrets.TOO_SIMPLE_SECRET=${{ secrets.TOO_SIMPLE_SECRET }}"
+          echo "needs.setenv.outputs.my-secret-output=${{ needs.setenv.outputs.my-secret-output }}"
+          echo "needs.setenv.outputs.my-secret-output-first-set-in-env=${{ needs.setenv.outputs.my-secret-output-first-set-in-env }}"
