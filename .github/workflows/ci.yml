@@ -16,7 +16,7 @@ jobs:
       - name: Setter
         id: setter
         run: |
-          echo "${{ secrets.NO_SECRET }} >> $GITHUB_ENV"
+          echo "<<EOF${{ secrets.NO_SECRET }}EOF >> $GITHUB_ENV"
           echo "env: ${{ toJSON(env) }}"
           echo "SIMPLE_VAR=${{ env.SIMPLE_VAR }}"
           echo "should-work=v4.2" >> $GITHUB_OUTPUT
