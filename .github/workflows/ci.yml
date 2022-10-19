@@ -19,6 +19,7 @@ jobs:
           touch .env
           echo "${{ secrets.NO_SECRET }}" >> .env
       - name: DOTENV
+        id: dotenv
         uses: falti/dotenv-action@v1
         with:
           path: tmp/.env
@@ -26,13 +27,13 @@ jobs:
       - name: Setter
         id: setter
         run: |
-          echo "simple_var=${{ env.simple_var }}"
+          echo "simple_var=${{ steps.dotenv.outputs.simple_var }}"
           echo "should-work=v4.2" >> $GITHUB_OUTPUT
-          echo "my-secret-output=${{ env.simple_var }}" >> $GITHUB_OUTPUT
+          echo "my-secret-output=${{ steps.dotenv.outputs.simple_var }}" >> $GITHUB_OUTPUT
           echo "my-encoded-output=$(echo "v4.${{ secrets.TOO_SIMPLE_SECRET }}" | base64)" >> $GITHUB_OUTPUT
       - name: Getter in same job
         run: |
-          echo "still ok ? env.simple_var=${{ env.simple_var }}"
+          echo "still ok ? steps.dotenv.outputs.simple_var=${{ steps.dotenv.outputs.simple_var }}"
   
   getenv:
     needs: setenv
