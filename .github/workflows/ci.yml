@@ -31,7 +31,7 @@ jobs:
           echo "steps.setter.outputs.my-secret-output-first-set-in-env=${{ steps.setter.outputs.my-secret-output-first-set-in-env }}"
   
   getenv:
-    need: setenv
+    needs: setenv
     runs-on: ubuntu-latest
 
     steps:
