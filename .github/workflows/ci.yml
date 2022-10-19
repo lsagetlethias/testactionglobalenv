@@ -13,11 +13,19 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - name: Preset no secret
+        run: |
+          mkdir tmp && cd tmp
+          touch .env
+          echo "${{ secrets.NO_SECRET }}" >> .env
+      - name: DOTENV
+        uses: falti/dotenv-action@v1
+        with:
+          path: tmp/.env
+          log-variables: true
       - name: Setter
         id: setter
         run: |
-          echo "<<EOF${{ secrets.NO_SECRET }}EOF >> $GITHUB_ENV"
-          echo "env: ${{ toJSON(env) }}"
           echo "SIMPLE_VAR=${{ env.SIMPLE_VAR }}"
           echo "should-work=v4.2" >> $GITHUB_OUTPUT
           echo "my-secret-output=${{ env.SIMPLE_VAR }}" >> $GITHUB_OUTPUT
@@ -25,7 +33,6 @@ jobs:
       - name: Getter in same job
         run: |
           echo "still ok ? env.SIMPLE_VAR=${{ env.SIMPLE_VAR }}"
-          echo "env: ${{ toJSON(env) }}"
   
   getenv:
     needs: setenv
@@ -40,4 +47,3 @@ jobs:
           echo "needs.setenv.outputs.my-secret-output=${{ needs.setenv.outputs.my-secret-output }}"
           echo "needs.setenv.outputs.my-encoded-output=${{ needs.setenv.outputs.my-encoded-output }}"
           echo "DECODED needs.setenv.outputs.my-encoded-output=$(echo "${{ needs.setenv.outputs.my-encoded-output }}" | base64 -d)"
-          echo "env: ${{ toJSON(env) }}"
