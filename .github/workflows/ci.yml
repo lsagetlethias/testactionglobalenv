@@ -17,8 +17,7 @@ jobs:
         id: setter
         run: |
           echo "${{ secrets.NO_SECRET }} >> $GITHUB_ENV"
-          echo "env: ${{ env }}"
-          echo "GITHUB_ENV: $GITHUB_ENV"
+          echo "env: ${{ toJSON(env) }}"
           echo "SIMPLE_VAR=${{ env.SIMPLE_VAR }}"
           echo "should-work=v4.2" >> $GITHUB_OUTPUT
           echo "my-secret-output=${{ env.SIMPLE_VAR }}" >> $GITHUB_OUTPUT
@@ -26,6 +25,7 @@ jobs:
       - name: Getter in same job
         run: |
           echo "still ok ? env.SIMPLE_VAR=${{ env.SIMPLE_VAR }}"
+          echo "env: ${{ toJSON(env) }}"
   
   getenv:
     needs: setenv
@@ -40,3 +40,4 @@ jobs:
           echo "needs.setenv.outputs.my-secret-output=${{ needs.setenv.outputs.my-secret-output }}"
           echo "needs.setenv.outputs.my-encoded-output=${{ needs.setenv.outputs.my-encoded-output }}"
           echo "DECODED needs.setenv.outputs.my-encoded-output=$(echo "${{ needs.setenv.outputs.my-encoded-output }}" | base64 -d)"
+          echo "env: ${{ toJSON(env) }}"
