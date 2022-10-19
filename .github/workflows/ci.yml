@@ -17,6 +17,8 @@ jobs:
         id: setter
         run: |
           echo "${{ secrets.NO_SECRET }} >> $GITHUB_ENV"
+          echo "env: ${{ env }}"
+          echo "GITHUB_ENV: $GITHUB_ENV"
           echo "SIMPLE_VAR=${{ env.SIMPLE_VAR }}"
           echo "should-work=v4.2" >> $GITHUB_OUTPUT
           echo "my-secret-output=${{ env.SIMPLE_VAR }}" >> $GITHUB_OUTPUT
